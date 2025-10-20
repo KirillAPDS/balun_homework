@@ -2,40 +2,21 @@ package main
 
 import (
 	"fmt"
+	"unsafe"
 )
 
-type UintAny interface {
-	~uint16 | ~uint32 | ~uint64
-}
+func ToLittleEndian[T ~uint16 | ~uint32 | ~uint64](num T) T {
+	size := int(unsafe.Sizeof(num))
+	pointer := unsafe.Pointer(&num)
 
-func ToLittleEndian[T UintAny](x T) T {
-	switch any(x).(type) {
-	case uint16:
-		return T(reverse16(uint16(x)))
-	case uint32:
-		return T(reverse32(uint32(x)))
-	case uint64:
-		return T(reverse64(uint64(x)))
-	default:
-		return x
+	for i := 0; i < size / 2; i++ {
+		first := (*int8)(unsafe.Add(pointer, i))
+		last := (*int8)(unsafe.Add(pointer, size-i-1))
+
+		*first, *last = *last, *first
 	}
-}
 
-func reverse16(x uint16) uint16 {
-	return (x>>8)|(x<<8)
-}
-func reverse32(x uint32) uint32 {
-	return (x>>24) | ((x>>8)&0x0000FF00) | ((x<<8)&0x00FF0000) | (x<<24)
-}
-func reverse64(x uint64) uint64 {
-	return (x>>56) |
-		((x>>40)&0x000000000000FF00) |
-		((x>>24)&0x0000000000FF0000) |
-		((x>>8) &0x00000000FF000000) |
-		((x<<8) &0x000000FF00000000) |
-		((x<<24)&0x0000FF0000000000) |
-		((x<<40)&0x00FF000000000000) |
-		(x<<56)
+	return num
 }
 
 func main() {

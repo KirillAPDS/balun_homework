@@ -19,9 +19,9 @@ type CircularQueue struct {
 
 // создать очередь с определенным размером буфера
 func NewCircularQueue(size int) CircularQueue {
-	if size <= 0 {
-		size = 0
-	}
+	// if size <= 0 {
+	// 	size = 0
+	// }
 	return CircularQueue{
 		values: make([]int, size),
 		start:  0,

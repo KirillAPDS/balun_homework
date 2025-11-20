@@ -22,23 +22,6 @@ func NewOrderedMap() OrderedMap {
 	}
 }
 
-// бинарный поиск: возвращает позицию для ключа и флаг найден/нет
-func (m *OrderedMap) find(key int) (int, bool) {
-	lo, hi := 0, len(m.keys)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if m.keys[mid] < key {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	if lo < len(m.keys) && m.keys[lo] == key {
-		return lo, true
-	}
-	return lo, false
-}
-
 func (m *OrderedMap) Insert(key, value int) {
 	idx, ok := m.find(key)
 	if ok {
@@ -77,6 +60,23 @@ func (m *OrderedMap) ForEach(action func(int, int)) {
 		action(m.keys[i], m.vals[i])
 	}
 }
+
+// бинарный поиск: возвращает позицию для ключа и флаг найден/нет
+func (m *OrderedMap) find(key int) (int, bool) {
+	lo, hi := 0, len(m.keys)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if m.keys[mid] < key {
+			lo = mid + 1
+		} else {
+			hi = mid
+		}
+	}
+	if lo < len(m.keys) && m.keys[lo] == key {
+		return lo, true
+	}
+	return lo, false
+} 
 
 func TestCircularQueue(t *testing.T) {
 	data := NewOrderedMap()
